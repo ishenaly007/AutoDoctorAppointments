@@ -44,19 +44,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors() // Включаем CORS
-            .and()
-            .csrf(csrf -> csrf.disable()) // Отключаем CSRF
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/doctors/**").permitAll()
-                .requestMatchers("/doctors/*/schedule").permitAll()
-                .requestMatchers("/appointments/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Включаем CORS с нашей конфигурацией
+                .csrf(csrf -> csrf.disable()) // Отключаем CSRF
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll() // Разрешаем все запросы без авторизации
+                );
+        // Убираем JWT-фильтр, так как роли и авторизация больше не нужны
+        // .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -64,11 +59,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Только фронтенд на Vite
+        configuration.setAllowedOrigins(List.of("*")); // Разрешаем все источники (включая localhost:5173)
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Все методы
         configuration.setAllowedHeaders(List.of("*")); // Все заголовки
-        configuration.setAllowCredentials(true); // Поддержка куков / Authorization
-        configuration.setMaxAge(3600L); // Кешировать preflight-запросы
+        configuration.setAllowCredentials(false); // Отключаем поддержку credentials, так как это не нужно при AllowedOrigins = "*"
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Для всех путей

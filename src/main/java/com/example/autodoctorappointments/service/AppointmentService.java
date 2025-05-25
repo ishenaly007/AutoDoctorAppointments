@@ -9,7 +9,6 @@ import com.example.autodoctorappointments.repository.AppointmentRepository;
 import com.example.autodoctorappointments.repository.DoctorRepository;
 import com.example.autodoctorappointments.repository.DoctorScheduleRepository;
 import com.example.autodoctorappointments.repository.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +29,8 @@ public class AppointmentService {
     }
 
     public Appointment createAppointment(AppointmentDto appointmentDto) {
-        User patient = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User patient = userRepository.findById(appointmentDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         Doctor doctor = doctorRepository.findById(appointmentDto.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -52,9 +52,8 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    public List<Appointment> getMyAppointments() {
-        User patient = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return appointmentRepository.findByPatientId(patient.getId());
+    public List<Appointment> getMyAppointments(Long userId) {
+        return appointmentRepository.findByPatientId(userId);
     }
 
     public List<Appointment> getAppointmentsByDoctor(Long doctorId) {

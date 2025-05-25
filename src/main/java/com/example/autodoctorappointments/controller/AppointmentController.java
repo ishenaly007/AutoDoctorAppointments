@@ -24,8 +24,8 @@ public class AppointmentController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<Appointment>> getMyAppointments() {
-        return ResponseEntity.ok(appointmentService.getMyAppointments());
+    public ResponseEntity<List<Appointment>> getMyAppointments(@RequestParam Long userId) {
+        return ResponseEntity.ok(appointmentService.getMyAppointments(userId));
     }
 
     @GetMapping("/doctor/{doctorId}")

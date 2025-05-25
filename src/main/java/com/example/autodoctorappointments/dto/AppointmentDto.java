@@ -8,9 +8,6 @@ import java.time.LocalDate;
 
 @Data
 public class AppointmentDto {
-    @NotNull(message = "User ID is required")
-    private Long userId;
-
     @NotNull(message = "Doctor ID is required")
     private Long doctorId;
 

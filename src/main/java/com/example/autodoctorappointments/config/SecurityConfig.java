@@ -48,11 +48,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/doctors/**").permitAll()
-                        .requestMatchers("/doctors/*/schedule").permitAll()
-                        .requestMatchers("/appointments/my").authenticated()
-                        .requestMatchers("/appointments/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/swagger-ui/**", "/api/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/doctors/**").permitAll()
+                        .requestMatchers("/api/doctors/*/schedule").permitAll()
+                        .requestMatchers("/api/appointments/my").authenticated()
+                        .requestMatchers("/api/appointments/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

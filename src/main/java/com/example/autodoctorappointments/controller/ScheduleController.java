@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/doctors/{doctorId}/schedule")
+@RequestMapping("/api/doctors/{doctorId}/schedule")
 public class ScheduleController {
     private final ScheduleService scheduleService;
 
